@@ -23,10 +23,10 @@ builder.Services.AddControllersWithViews()
     .AddMicrosoftIdentityUI();
 builder.Services.AddRazorPages();
 
-//Configuring appsettings section AzureAdB2C, into IOptions
-builder.Services.AddOptions();
-builder.Services.Configure<OpenIdConnectOptions>(builder.Configuration.GetSection("AzureAdB2C"));
-
+// Configuring appsettings section AzureAdB2C, into IOptions
+//   builder.Services.AddOptions();
+//   builder.Services.Configure<OpenIdConnectOptions>(builder.Configuration.GetSection("AzureAdB2C"));
+// Works fine without this for now
 
 var app = builder.Build();
 
