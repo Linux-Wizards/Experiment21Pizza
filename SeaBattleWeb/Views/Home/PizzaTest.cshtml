@@ -1,0 +1,61 @@
+ @model IEnumerable<Pizza>
+
+@{
+    ViewData["Title"] = "All Pizzas";
+}
+
+<h2>All Pizzas</h2>
+<a asp-action="AddPizza" class="btn btn-sm btn-primary">Add Pizza</a>
+<a asp-action="GetPizza" class="btn btn-sm btn-secondary">Get Pizza</a>
+
+<table class="table table-sm table-striped table-bordered m-2">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>IsGlutenFree</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.Id</td>
+                <td>@r.Name</td>
+                <td>@r.IsGlutenFree</td>
+                <td>
+                    <a asp-action="UpdatePizza" asp-route-id="@r.Id">
+                        <img src="/icon/edit.png" />
+                    </a>
+                </td>
+                <td>
+                    <form asp-action="DeletePizza" method="post">
+                        <input type="hidden" value="@r.Id" name="PizzaId" />
+                        <input type="image" src="/icon/close.png" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@* @using System.Security.Claims
+
+@{
+  ViewData["Title"] = "Claims";
+}
+<h2>@ViewData["Title"].</h2>
+
+<table class="table-hover table-condensed table-striped">
+  <tr>
+    <th>Claim Type</th>
+    <th>Claim Value</th>
+  </tr>
+
+  @foreach (Claim claim in User.Claims)
+  {
+    <tr>
+      <td>@claim.Type</td>
+      <td>@claim.Value</td>
+    </tr>
+  }
+</table> *@
