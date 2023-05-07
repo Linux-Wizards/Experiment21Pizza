@@ -1,8 +1,8 @@
-using ContosoPizza.Models;
-using ContosoPizza.Services;
+using SeaBattleApi.Models;
+using SeaBattleApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ContosoPizza.Controllers;
+namespace SeaBattleApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]

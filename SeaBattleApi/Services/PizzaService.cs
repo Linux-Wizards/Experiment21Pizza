@@ -1,6 +1,6 @@
-using ContosoPizza.Models;
+using SeaBattleApi.Models;
 
-namespace ContosoPizza.Services;
+namespace SeaBattleApi.Services;
 
 public static class PizzaService
 {

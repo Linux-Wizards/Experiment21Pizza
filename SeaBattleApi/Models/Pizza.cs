@@ -1,4 +1,4 @@
-namespace ContosoPizza.Models;
+namespace SeaBattleApi.Models;
 
 public class Pizza
 {
