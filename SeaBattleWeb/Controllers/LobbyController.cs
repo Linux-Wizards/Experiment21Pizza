@@ -25,6 +25,12 @@ public class LobbyController : Controller
             return View(lobbyList);
         }
 
+    
+    public async Task<IActionResult> NewGame()
+        {
+            return View();
+        }
+
 
     public LobbyController(ILogger<LobbyController> logger)
     {

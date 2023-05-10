@@ -1,0 +1,19 @@
+@model NewGameModel
+@{
+    ViewData["Title"] = "New game";
+}
+
+<h2>Create a new game</h2>
+@* <select name="Game visibility">
+    <option value="">Lobby visibility</option>
+    <option value="Private">Private</option>
+    <option value="Public">Public</option>
+</select>*@
+<form method="post">
+    <input type="radio" asp-for="Visibility" value="Private" />Private<br />
+    <input type="radio" asp-for="Visibility" value="Public" />Public<br />
+    <input type="submit" value="Create Game" />
+</form>
+
+
+
