@@ -1,0 +1,145 @@
+{
+	"info": {
+		"_postman_id": "9afc798e-58dc-4c12-b5d2-327b67e0c838",
+		"name": "SeaBattleApi2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "New game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"public\": true,\r\n    \"GameCode\": \"dupa\",\r\n    \"Player1Name\": \"Darek\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44321/gameApi/newGame",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44321",
+					"path": [
+						"gameApi",
+						"newGame"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Join game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"gameCode\": \"dupa\",\r\n    \"Player2Name\": \"Marek\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44321/gameApi/joinGame",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44321",
+					"path": [
+						"gameApi",
+						"joinGame"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all games",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44321/gameApi/allGames",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44321",
+					"path": [
+						"gameApi",
+						"allGames"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Make ready",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Id\": \"3\",\r\n    \"PlayerSecret\": \"Secret\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44321/gameApi/makeReady",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44321",
+					"path": [
+						"gameApi",
+						"makeReady"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Make unready",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Id\": \"3\",\r\n    \"PlayerSecret\": \"Secret\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44321/gameApi/makeUnready",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44321",
+					"path": [
+						"gameApi",
+						"makeUnready"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
