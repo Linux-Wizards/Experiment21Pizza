@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SeaBattleApi2;
+using System.Net.NetworkInformation;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<GameStateDb>(opt => opt.UseInMemoryDatabase("GameStateDb"));
@@ -13,7 +14,17 @@ gameApi.MapPost("/newGame", CreateNewGame);
 gameApi.MapPost("/joinGame", JoinGame);
 gameApi.MapPost("/makeReady", MakeReady);
 gameApi.MapPost("/makeUnready", MakeUnready);
+gameApi.MapGet("/gameConfig", GetGameConfig);
+gameApi.MapGet("/getStatus", GetStatus);
 
+static async Task<IResult> GetStatus(GameStateDb db)
+{
+
+}
+static async Task<IResult> GetGameConfig()
+{
+    return TypedResults.Ok(new { status = "ok", config = new GameConfig() });
+}
 static async Task<IResult> SwitchReady(GameIdAndPlayerSecret args, GameStateDb db, bool value)
 {
     var game = await db.GameStates.FindAsync(args.Id);
@@ -112,4 +123,19 @@ public class GameIdAndPlayerSecret
 {
     public int Id { get; set; }
     public string PlayerSecret { get; set; }
+}
+
+public class GameConfig
+{
+    public int Width { get; set; } = 10;
+    public int Height { get; set; } = 10;
+    // First value - ship size
+    // Second value - count
+    public Dictionary<int, int> Ships { get; set; } = new Dictionary<int, int>()
+    {
+        { 2, 4 },
+        { 3, 3 },
+        { 4, 2 },
+        { 6, 1 }
+    };
 }
