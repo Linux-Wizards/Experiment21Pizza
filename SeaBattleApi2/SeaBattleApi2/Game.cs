@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static SeaBattleApi2.GameMap;
 
 namespace SeaBattleApi2
 {
-    public class GameState
+    public class Game
     {
         public enum GameTile
         {
@@ -25,8 +24,8 @@ namespace SeaBattleApi2
         public string Player1Secret { get; set; } = "Secret"; // TODO: should be a real secret
         public bool Player1Ready { get; set; } = false;
 
-        public string Player2Name { get; set; }
-        public string Player2Secret { get; set; }
+        public string? Player2Name { get; set; }
+        public string Player2Secret { get; set; } = "Secret2"; // TODO: should be a real secret
         public bool Player2Ready { get; set; } = false;
         public bool InProgress { get; set; } = false;
         // E.g. why the game finished

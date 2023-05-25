@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using SeaBattleApi2;
 using System.Net.NetworkInformation;
-using static SeaBattleApi2.GameState;
+using static SeaBattleApi2.Game;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<GameStateDb>(opt => opt.UseInMemoryDatabase("GameStateDb"));
+builder.Services.AddDbContext<GameDb>(opt => opt.UseInMemoryDatabase("GameStateDb"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 var app = builder.Build();
 
@@ -18,32 +18,45 @@ gameApi.MapPost("/makeUnready", MakeUnready);
 gameApi.MapGet("/gameConfig", GetGameConfig);
 gameApi.MapPost("/getStatus", GetStatus);
 
-static async Task<IResult> GetStatus(GameIdAndPlayerSecret args, GameStateDb db)
+static async Task<IResult> GetStatus(GameIdAndPlayerSecret args, GameDb db)
 {
     var game = await db.GameStates.FindAsync(args.Id);
     if (game is null) return TypedResults.Ok(new { status = "fail", reason = "Game does not exist" });
 
     // Ships of the player who calls the method
-    /*List<List<GameTile>> playerShips;*/
+    string playerShips;
 
-    /*if (game.Player1Secret == args.PlayerSecret) playerShips = game.Player1Ships;
-    else if (game.Player2Secret == args.PlayerSecret) playerShips = game.Player2Ships;*/
+    if (game.Player1Secret == args.PlayerSecret) playerShips = game.Player1Ships;
+    else if (game.Player2Secret == args.PlayerSecret) playerShips = game.Player2Ships;
     else return TypedResults.Ok(new { status = "fail", reason = "Wrong client secret" });
 
-    return TypedResults.Ok(new { status = "ok", /*ownShips = playerShips,*/ inProgress = game.InProgress });
+    return TypedResults.Ok(new { status = "ok", ownShips = playerShips, inProgress = game.InProgress });
 }
 static async Task<IResult> GetGameConfig()
 {
     return TypedResults.Ok(new { status = "ok", height = Config.Height, width = Config.Width, ships = Config.Ships });
 }
-static async Task<IResult> SwitchReady(GameIdAndPlayerSecret args, GameStateDb db, bool value)
+static async Task<IResult> SwitchReady(GameIdAndPlayerSecret args, GameDb db, bool value)
 {
     var game = await db.GameStates.FindAsync(args.Id);
     if (game is null) return TypedResults.Ok(new { status = "fail", reason = "Game does not exist" });
 
-    if (game.Player1Secret == args.PlayerSecret) game.Player1Ready = value;
-    else if (game.Player2Secret == args.PlayerSecret) game.Player2Ready = value;
+    bool playerReadySwitch;
+    string playerShipMap;
+
+    if (game.Player1Secret == args.PlayerSecret)
+    {
+        playerReadySwitch = game.Player1Ready;
+        playerShipMap = game.Player1Ships;
+    }
+    else if (game.Player2Secret == args.PlayerSecret)
+    {
+        playerReadySwitch = game.Player2Ready;
+        playerShipMap = game.Player2Ships;
+    }
     else return TypedResults.Ok(new { status = "fail", reason = "Wrong client secret" });
+
+
 
     if (game.Player1Ready && game.Player2Ready)
         game.InProgress = true;
@@ -52,21 +65,21 @@ static async Task<IResult> SwitchReady(GameIdAndPlayerSecret args, GameStateDb d
 
     return TypedResults.Ok(new { status = "ok", inProgress = game.InProgress});
 }
-static async Task<IResult> MakeReady(GameIdAndPlayerSecret args, GameStateDb db)
+static async Task<IResult> MakeReady(GameIdAndPlayerSecret args, GameDb db)
 {
     return await SwitchReady(args, db, true);
 }
-static async Task<IResult> MakeUnready(GameIdAndPlayerSecret args, GameStateDb db)
+static async Task<IResult> MakeUnready(GameIdAndPlayerSecret args, GameDb db)
 {
     return await SwitchReady(args, db, false);
 }
-static async Task<IResult> GetAllGames(GameStateDb db)
+static async Task<IResult> GetAllGames(GameDb db)
 {
     return TypedResults.Ok(new { status = "ok", games = await db.GameStates.Where(x => x.Public).Select(x => new PublicGameInfo(x)).ToListAsync() });
 }
-static async Task<IResult> CreateNewGame(CreateNewGameArgs args, GameStateDb db)
+static async Task<IResult> CreateNewGame(CreateNewGameArgs args, GameDb db)
 {
-    var newGame = new GameState
+    var newGame = new Game
     {
         Public = args.Public,
         GameCode = args.GameCode,
@@ -80,7 +93,7 @@ static async Task<IResult> CreateNewGame(CreateNewGameArgs args, GameStateDb db)
     return TypedResults.Ok(new { status = "ok", gameId = newGame.Id });
 }
 
-static async Task<IResult> JoinGame(JoinGameArgs args, GameStateDb db)
+static async Task<IResult> JoinGame(JoinGameArgs args, GameDb db)
 {
     var game = await db.GameStates.FindAsync(args.Id);
     if (game is null) return TypedResults.Ok(new { status="fail", reason="Game does not exist"});
@@ -121,7 +134,7 @@ public class PublicGameInfo
     public string Player1Name { get; set; }
     public string? Player2Name { get; set; }
 
-    public PublicGameInfo (GameState gameInfo)
+    public PublicGameInfo (Game gameInfo)
     {
         Id = gameInfo.Id;
         Public = gameInfo.Public;
