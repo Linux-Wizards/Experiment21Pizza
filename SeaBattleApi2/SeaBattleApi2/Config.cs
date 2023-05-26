@@ -1,6 +1,6 @@
 ﻿namespace SeaBattleApi2
 {
-    static class Config
+    public static class Config
     {
         public static int Height { get; } = 10;
         public static int Width { get; } = 10;
@@ -9,6 +9,7 @@
         { 2, 4 },
         { 3, 3 },
         { 4, 2 },
+        { 5, 0 },
         { 6, 1 }
     };
     }

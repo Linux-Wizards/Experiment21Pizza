@@ -17,6 +17,7 @@ gameApi.MapPost("/makeReady", MakeReady);
 gameApi.MapPost("/makeUnready", MakeUnready);
 gameApi.MapGet("/gameConfig", GetGameConfig);
 gameApi.MapPost("/getStatus", GetStatus);
+gameApi.MapPost("/makeMove", MakeMove);
 
 static async Task<IResult> GetStatus(GameIdAndPlayerSecret args, GameDb db)
 {
@@ -36,27 +37,41 @@ static async Task<IResult> GetGameConfig()
 {
     return TypedResults.Ok(new { status = "ok", height = Config.Height, width = Config.Width, ships = Config.Ships });
 }
-static async Task<IResult> SwitchReady(GameIdAndPlayerSecret args, GameDb db, bool value)
+static async Task<IResult> SwitchReady(SwitchReadyArgs args, GameDb db, bool value)
 {
     var game = await db.GameStates.FindAsync(args.Id);
     if (game is null) return TypedResults.Ok(new { status = "fail", reason = "Game does not exist" });
 
-    bool playerReadySwitch;
-    string playerShipMap;
+    if (game.InProgress)
+    {
+        return TypedResults.Ok(new { status = "fail", reason = "Game already in progress" });
+    }
 
     if (game.Player1Secret == args.PlayerSecret)
     {
-        playerReadySwitch = game.Player1Ready;
-        playerShipMap = game.Player1Ships;
+        game.Player1Ships = args.PlayerShips;
+
+        if (!game.VerifySetup(game.Player1Ships))
+        {
+            game.Player1Ready = false;
+            return TypedResults.Ok(new { status = "fail", reason = "Wrong map state" });
+        }
+
+        game.Player1Ready = true;
     }
     else if (game.Player2Secret == args.PlayerSecret)
     {
-        playerReadySwitch = game.Player2Ready;
-        playerShipMap = game.Player2Ships;
+        game.Player2Ships = args.PlayerShips;
+
+        if (!game.VerifySetup(game.Player2Ships))
+        {
+            game.Player2Ready = false;
+            return TypedResults.Ok(new { status = "fail", reason = "Wrong map state" });
+        }
+
+        game.Player2Ready = true;
     }
     else return TypedResults.Ok(new { status = "fail", reason = "Wrong client secret" });
-
-
 
     if (game.Player1Ready && game.Player2Ready)
         game.InProgress = true;
@@ -65,13 +80,17 @@ static async Task<IResult> SwitchReady(GameIdAndPlayerSecret args, GameDb db, bo
 
     return TypedResults.Ok(new { status = "ok", inProgress = game.InProgress});
 }
-static async Task<IResult> MakeReady(GameIdAndPlayerSecret args, GameDb db)
+static async Task<IResult> MakeReady(SwitchReadyArgs args, GameDb db)
 {
     return await SwitchReady(args, db, true);
 }
-static async Task<IResult> MakeUnready(GameIdAndPlayerSecret args, GameDb db)
+static async Task<IResult> MakeUnready(SwitchReadyArgs args, GameDb db)
 {
     return await SwitchReady(args, db, false);
+}
+static async Task<IResult> MakeMove(MakeMoveArgs args, GameDb db)
+{
+
 }
 static async Task<IResult> GetAllGames(GameDb db)
 {
@@ -147,4 +166,15 @@ public class GameIdAndPlayerSecret
 {
     public int Id { get; set; }
     public string PlayerSecret { get; set; }
+}
+
+public class SwitchReadyArgs : GameIdAndPlayerSecret
+{
+    public string PlayerShips { get; set; }
+}
+
+public class MakeMoveArgs : GameIdAndPlayerSecret
+{
+    public int AtX;
+    public int AtY;
 }
