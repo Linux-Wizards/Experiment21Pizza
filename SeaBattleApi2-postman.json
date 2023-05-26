@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9afc798e-58dc-4c12-b5d2-327b67e0c838",
+		"_postman_id": "488370ab-0b66-4bd2-b5c1-e585609b43a9",
 		"name": "SeaBattleApi2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -84,13 +84,33 @@
 			"response": []
 		},
 		{
+			"name": "Get game config",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44321/gameApi/gameConfig",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44321",
+					"path": [
+						"gameApi",
+						"gameConfig"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Make ready",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"Id\": \"3\",\r\n    \"PlayerSecret\": \"Secret\"\r\n}\r\n",
+					"raw": "{\r\n    \"Id\": \"1\",\r\n    \"PlayerSecret\": \"Secret\",\r\n    \"PlayerShips\": \"##*##*##*#*********####***************#*#****#**#*#****#**#*#*#**#**#*#*#**#****#*#*******#******###\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -136,6 +156,35 @@
 					"path": [
 						"gameApi",
 						"makeUnready"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get status",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Id\": \"1\",\r\n    \"PlayerSecret\": \"Secret2\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44321/gameApi/getStatus",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44321",
+					"path": [
+						"gameApi",
+						"getStatus"
 					]
 				}
 			},
