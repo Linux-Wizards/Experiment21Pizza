@@ -1,0 +1,28 @@
+﻿@page "/neworder"
+
+<PageTitle>Add new orders</PageTitle>
+
+<h1>Orders: (@orders.Count(order => order.Status != Status.Delivered))</h1>
+
+<input placeholder="New order" @bind="newOrder" />
+<button @onclick="AddOrder">Place order</button>
+
+<ul>
+    @foreach (var order in orders)
+    {
+        <li>
+            <input type="checkbox" @bind="order.Status" />
+        </li>
+    }
+</ul>
+
+@code {
+    private List<Order> orders = new();
+    private Order? newOrder;
+
+    private void AddOrder()
+    {
+        // test
+    }
+}
+
