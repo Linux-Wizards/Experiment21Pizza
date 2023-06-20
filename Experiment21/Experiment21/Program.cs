@@ -30,6 +30,7 @@ namespace Experiment21
 
             // Add OrderService
             builder.Services.AddScoped<OrderService>();
+            builder.Services.AddScoped<ProductService>();
 
             var app = builder.Build();
 

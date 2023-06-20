@@ -38,9 +38,10 @@
 @code {
     private Order newOrder = new Order();
 
-    private void PlaceNewOrder()
+    private async Task PlaceNewOrder()
     {
-        OrderService.CreateOrder(newOrder);
+        await OrderService.CreateOrderAsync(newOrder);
         newOrder = new Order();
     }
+
 }

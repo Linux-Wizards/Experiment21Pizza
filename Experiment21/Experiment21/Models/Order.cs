@@ -10,13 +10,14 @@ public class Order
     [Required(ErrorMessage = "Address is required")]
     public string Address { get; set; }
     public decimal ShippingCost { get; set; }
-    public OrderStatus Status { get; set; } //Enum
+    public OrderStatus Status { get; set; } // Enum
     public ICollection<OrderDetail> OrderDetails { get; set; }
     public decimal TotalCost { get; set; }
 }
 
 public class OrderDetail
 {
+    [Key]
     public int Id { get; set; }
     public int OrderId { get; set; }
     public Order Order { get; set; }
@@ -27,9 +28,9 @@ public class OrderDetail
 
 public enum OrderStatus
 {
-    Received,
-    BeingPrepared,
-    ReadyForPickup,
-    InDelivery,
-    Delivered
+    Received = 0,
+    BeingPrepared = 1,
+    ReadyForPickup = 2,
+    InDelivery = 3,
+    Delivered = 4
 }

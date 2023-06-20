@@ -1,7 +1,8 @@
-﻿namespace Experiment21.Services;
-
+﻿using Experiment21.Data;
 using Experiment21.Models;
-using Experiment21.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace Experiment21.Services;
 
 public class OrderService
 {
@@ -12,22 +13,35 @@ public class OrderService
         _context = context;
     }
 
-    public void CreateOrder(Order order)
+    public async Task<List<Order>> GetOrdersAsync()
+    {
+        return await _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Product).ToListAsync();
+    }
+
+    public async Task<Order> GetOrderByIdAsync(int id)
+    {
+        return await _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Product).FirstOrDefaultAsync(o => o.Id == id);
+    }
+
+    public async Task CreateOrderAsync(Order order)
     {
         _context.Orders.Add(order);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void UpdateOrder(Order order)
+    public async Task UpdateOrderAsync(Order order)
     {
         _context.Orders.Update(order);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void DeleteOrder(int id)
+    public async Task DeleteOrderAsync(int id)
     {
-        var order = _context.Orders.FirstOrDefault(o => o.Id == id);
-        _context.Orders.Remove(order);
-        _context.SaveChanges();
+        var order = await _context.Orders.FindAsync(id);
+        if (order != null)
+        {
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+        }
     }
 }
