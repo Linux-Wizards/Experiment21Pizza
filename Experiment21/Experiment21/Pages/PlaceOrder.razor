@@ -55,18 +55,28 @@
 
     private async Task PlaceNewOrder()
     {
+        newOrder.OrderDetails = new List<OrderDetail>();
+
         foreach (var productVM in products.Where(p => p.Quantity > 0))
         {
             newOrder.OrderDetails.Add(new OrderDetail
-            {
-                ProductId = productVM.Product.Id,
-                Quantity = productVM.Quantity
-            });
+                {
+                    ProductId = productVM.Product.Id,
+                    Quantity = productVM.Quantity
+                });
         }
 
         await OrderService.CreateOrderAsync(newOrder);
         newOrder = new Order();
+
+        // Reset all the quantity selectors
+        foreach (var productVM in products)
+        {
+            productVM.Quantity = 0;
+        }
     }
+
+
 
     private class ProductViewModel
     {
