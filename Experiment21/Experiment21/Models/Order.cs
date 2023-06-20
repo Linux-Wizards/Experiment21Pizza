@@ -3,8 +3,11 @@
 namespace Experiment21.Models;
 public class Order
 {
+    [Key]
     public int Id { get; set; }
+    [Required(ErrorMessage = "Customer Name is required")]
     public string CustomerName { get; set; }
+    [Required(ErrorMessage = "Address is required")]
     public string Address { get; set; }
     public decimal ShippingCost { get; set; }
     public OrderStatus Status { get; set; } //Enum

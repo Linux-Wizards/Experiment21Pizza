@@ -4,16 +4,35 @@
 @using Experiment21.Services;
 @using Microsoft.AspNetCore.Components.Forms
 
-<EditForm Model="newOrder" OnValidSubmit="PlaceNewOrder">
+<style>
+    .stacked-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stacked-form div {
+        margin-bottom: 10px;
+    }
+</style>
+
+<EditForm Model="newOrder" OnValidSubmit="PlaceNewOrder" class="stacked-form">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <InputText id="customerName" @bind-Value="newOrder.CustomerName" placeholder="Customer Name" />
-    <InputText id="address" @bind-Value="newOrder.Address" placeholder="Address" />
+    <div>
+        <InputText id="customerName" @bind-Value="newOrder.CustomerName" placeholder="Customer Name" />
+        <ValidationMessage For="@(() => newOrder.CustomerName)" />
+    </div>
+
+    <div>
+        <InputText id="address" @bind-Value="newOrder.Address" placeholder="Address" />
+        <ValidationMessage For="@(() => newOrder.Address)" />
+    </div>
 
     <!-- You'd typically have a UI to select products and specify quantities here -->
-
-    <button type="submit">Place Order</button>
+    <div>
+        <button type="submit">Place Order</button>
+    </div>
 </EditForm>
 
 @code {
