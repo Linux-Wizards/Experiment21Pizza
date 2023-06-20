@@ -1,4 +1,5 @@
 ﻿@page "/placeorder"
+@inject IJSRuntime JSRuntime
 @inject ProductService ProductService
 @inject OrderService OrderService
 @using Experiment21.Models;
@@ -66,16 +67,25 @@
                 });
         }
 
-        await OrderService.CreateOrderAsync(newOrder);
-        newOrder = new Order();
-
-        // Reset all the quantity selectors
-        foreach (var productVM in products)
+        if (newOrder.OrderDetails.Any())
         {
-            productVM.Quantity = 0;
+            await OrderService.CreateOrderAsync(newOrder);
+
+            await JSRuntime.InvokeVoidAsync("alert", "Order placed successfully!");
+
+            newOrder = new Order();
+
+            // Reset all the quantity selectors
+            foreach (var productVM in products)
+            {
+                productVM.Quantity = 0;
+            }
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "No product has been selected!");
         }
     }
-
 
 
     private class ProductViewModel
