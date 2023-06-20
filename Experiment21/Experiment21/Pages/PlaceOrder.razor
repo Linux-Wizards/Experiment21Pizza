@@ -1,4 +1,5 @@
 ﻿@page "/placeorder"
+@inject ProductService ProductService
 @inject OrderService OrderService
 @using Experiment21.Models;
 @using Experiment21.Services;
@@ -29,7 +30,14 @@
         <ValidationMessage For="@(() => newOrder.Address)" />
     </div>
 
-    <!-- You'd typically have a UI to select products and specify quantities here -->
+    @foreach(var product in products)
+    {
+        <div>
+            @product.Product.Name (@product.Product.Price.ToString("C"))
+            <InputNumber @bind-Value="product.Quantity" min="0" />
+        </div>
+    }
+
     <div>
         <button type="submit">Place Order</button>
     </div>
@@ -37,11 +45,32 @@
 
 @code {
     private Order newOrder = new Order();
+    private List<ProductViewModel> products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var productList = await ProductService.GetProductsAsync();
+        products = productList.Select(p => new ProductViewModel { Product = p }).ToList();
+    }
 
     private async Task PlaceNewOrder()
     {
+        foreach (var productVM in products.Where(p => p.Quantity > 0))
+        {
+            newOrder.OrderDetails.Add(new OrderDetail
+            {
+                ProductId = productVM.Product.Id,
+                Quantity = productVM.Quantity
+            });
+        }
+
         await OrderService.CreateOrderAsync(newOrder);
         newOrder = new Order();
     }
 
+    private class ProductViewModel
+    {
+        public Product Product { get; set; }
+        public int Quantity { get; set; }
+    }
 }
