@@ -1,0 +1,27 @@
+﻿@page "/placeorder"
+@inject OrderService OrderService
+@using Experiment21.Models;
+@using Experiment21.Services;
+@using Microsoft.AspNetCore.Components.Forms
+
+<EditForm Model="newOrder" OnValidSubmit="PlaceNewOrder">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="customerName" @bind-Value="newOrder.CustomerName" placeholder="Customer Name" />
+    <InputText id="address" @bind-Value="newOrder.Address" placeholder="Address" />
+
+    <!-- You'd typically have a UI to select products and specify quantities here -->
+
+    <button type="submit">Place Order</button>
+</EditForm>
+
+@code {
+    private Order newOrder = new Order();
+
+    private void PlaceNewOrder()
+    {
+        OrderService.CreateOrder(newOrder);
+        newOrder = new Order();
+    }
+}
