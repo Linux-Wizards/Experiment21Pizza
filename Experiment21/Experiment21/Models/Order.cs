@@ -1,5 +1,6 @@
-﻿namespace Experiment21.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Experiment21.Models;
 public class Order
 {
     public int Id { get; set; }

@@ -15,4 +15,18 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        // Seed initial data
+        builder.Entity<Product>().HasData(
+            new Product { Id = 1, Name = "Pepperoni Pizza", Price = 15.0M },
+            new Product { Id = 2, Name = "Veggie Pizza", Price = 12.0M },
+            new Product { Id = 3, Name = "Cheese Pizza", Price = 10.0M },
+            new Product { Id = 4, Name = "Margherita Pizza", Price = 14.0M },
+            new Product { Id = 5, Name = "BBQ Chicken Pizza", Price = 16.0M }
+        );
+    }
 }
