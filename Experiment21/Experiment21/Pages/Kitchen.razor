@@ -1,0 +1,90 @@
+﻿@page "/kitchen"
+@inject OrderService OrderService
+@using Experiment21.Models;
+@using Experiment21.Services;
+
+<style>
+    .toggle-button {
+        font-size: 0.6em;
+        padding: 5px 10px;
+    }
+</style>
+
+<h1>Kitchen Orders</h1>
+
+<h2>Received <button class="toggle-button" @onclick="() => showReceivedOrders = !showReceivedOrders">@showReceivedButtonText</button></h2>
+@if (showReceivedOrders)
+{
+    foreach (var order in orders.Where(o => o.Status == OrderStatus.Received))
+    {
+        <p>
+            Order ID: @order.Id <br />
+            Customer name: @order.CustomerName <br />
+            Status: @order.Status <br />
+            <button @onclick="() => PrepareOrder(order)">Start Preparing</button>
+        </p>
+    }
+}
+
+<h2>Being Prepared <button class="toggle-button" @onclick="() => showBeingPreparedOrders = !showBeingPreparedOrders">@showBeingPreparedButtonText</button></h2>
+@if (showBeingPreparedOrders)
+{
+    foreach (var order in orders.Where(o => o.Status == OrderStatus.BeingPrepared))
+    {
+        <p>
+            Order ID: @order.Id <br />
+            Customer name: @order.CustomerName <br />
+            Status: @order.Status <br />
+            <button @onclick="() => CompleteOrder(order)">Ready for Pickup</button>
+        </p>
+    }
+}
+
+<h2>Ready For Pickup <button class="toggle-button" @onclick="() => showReadyForPickupOrders = !showReadyForPickupOrders">@showReadyForPickupButtonText</button></h2>
+@if (showReadyForPickupOrders)
+{
+    foreach (var order in orders.Where(o => o.Status == OrderStatus.ReadyForPickup))
+    {
+        <p>
+            Order ID: @order.Id <br />
+            Customer name: @order.CustomerName <br />
+            Status: @order.Status <br />
+        </p>
+    }
+}
+
+@code {
+    private List<Order> orders = new();
+
+    private bool showReceivedOrders = true;
+    private bool showBeingPreparedOrders = true;
+    private bool showReadyForPickupOrders = true;
+
+    private string showReceivedButtonText => showReceivedOrders ? "Hide" : "Show";
+    private string showBeingPreparedButtonText => showBeingPreparedOrders ? "Hide" : "Show";
+    private string showReadyForPickupButtonText => showReadyForPickupOrders ? "Hide" : "Show";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrders();
+    }
+
+    private async Task GetOrders()
+    {
+        orders = await OrderService.GetOrdersAsync();
+    }
+
+    private async Task PrepareOrder(Order order)
+    {
+        order.Status = OrderStatus.BeingPrepared;
+        await OrderService.UpdateOrderAsync(order);
+        await GetOrders();
+    }
+
+    private async Task CompleteOrder(Order order)
+    {
+        order.Status = OrderStatus.ReadyForPickup;
+        await OrderService.UpdateOrderAsync(order);
+        await GetOrders();
+    }
+}

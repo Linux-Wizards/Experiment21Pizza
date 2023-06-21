@@ -39,6 +39,8 @@
     }
 </style>
 
+<h1>Place orders</h1>
+
 <EditForm Model="newOrder" OnValidSubmit="PlaceNewOrder" class="stacked-form">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -86,7 +88,7 @@
 </EditForm>
 
 @code {
-    private Order newOrder = new Order();
+    private Order newOrder = new();
     private List<ProductViewModel> products = new();
 
     protected override async Task OnInitializedAsync()
