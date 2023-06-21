@@ -33,30 +33,34 @@
         padding-bottom: 5px;
         text-align: left;
     }
+
+    .field {
+        margin-bottom: 10px;
+    }
 </style>
 
 <EditForm Model="newOrder" OnValidSubmit="PlaceNewOrder" class="stacked-form">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div>
+    <div class="field">
         <InputText id="customerName" @bind-Value="newOrder.CustomerName" placeholder="Customer Name" />
         <ValidationMessage For="@(() => newOrder.CustomerName)" />
     </div>
 
-    <div>
+    <div class="field">
         <InputText id="address" @bind-Value="newOrder.Address" placeholder="Address" />
         <ValidationMessage For="@(() => newOrder.Address)" />
     </div>
 
-    <div>
+    <div class="field">
         <InputText id="phoneNumber" @bind-Value="newOrder.PhoneNumber" placeholder="Phone Number" />
         <ValidationMessage For="@(() => newOrder.PhoneNumber)" />
     </div>
 
     @foreach (var product in products)
     {
-        <div>
+        <div class="field">
             @product.Product.Name (@product.Product.Price.ToString("C"))
             <InputNumber @bind-Value="product.Quantity" min="0" />
         </div>
@@ -71,7 +75,7 @@
         </div>
     </div>
 
-    <div>
+    <div class="field">
         <button type="submit">Place Order</button>
     </div>
 </EditForm>
