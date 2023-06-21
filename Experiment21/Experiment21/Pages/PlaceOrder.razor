@@ -12,8 +12,17 @@
         flex-direction: column;
     }
 
-    .stacked-form div {
-        margin-bottom: 10px;
+        .stacked-form div {
+            margin-bottom: 10px;
+        }
+
+    .total-cost {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #4CAF50; /* Green color */
+        background-color: #F0F0F0; /* Light gray background */
+        padding: 10px;
+        text-align: left;
     }
 </style>
 
@@ -31,13 +40,17 @@
         <ValidationMessage For="@(() => newOrder.Address)" />
     </div>
 
-    @foreach(var product in products)
+    @foreach (var product in products)
     {
         <div>
             @product.Product.Name (@product.Product.Price.ToString("C"))
             <InputNumber @bind-Value="product.Quantity" min="0" />
         </div>
     }
+
+    <div class="total-cost">
+        Total Cost: @TotalCost.ToString("C")
+    </div>
 
     <div>
         <button type="submit">Place Order</button>
@@ -53,6 +66,8 @@
         var productList = await ProductService.GetProductsAsync();
         products = productList.Select(p => new ProductViewModel { Product = p }).ToList();
     }
+
+    private decimal TotalCost => products.Sum(p => p.Quantity * p.Product.Price);
 
     private async Task PlaceNewOrder()
     {
@@ -86,7 +101,6 @@
             await JSRuntime.InvokeVoidAsync("alert", "No product has been selected!");
         }
     }
-
 
     private class ProductViewModel
     {
