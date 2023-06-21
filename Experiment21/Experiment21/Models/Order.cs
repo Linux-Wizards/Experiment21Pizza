@@ -9,6 +9,9 @@ public class Order
     public string CustomerName { get; set; }
     [Required(ErrorMessage = "Address is required")]
     public string Address { get; set; }
+    [Required(ErrorMessage = "Phone number is required")]
+    [DataType(DataType.PhoneNumber)]
+    public string PhoneNumber { get; set; }
     public decimal ShippingCost { get; set; }
     public OrderStatus Status { get; set; } // Enum
     public ICollection<OrderDetail> OrderDetails { get; set; }

@@ -40,6 +40,11 @@
         <ValidationMessage For="@(() => newOrder.Address)" />
     </div>
 
+    <div>
+        <InputText id="phoneNumber" @bind-Value="newOrder.PhoneNumber" placeholder="Phone Number" />
+        <ValidationMessage For="@(() => newOrder.PhoneNumber)" />
+    </div>
+
     @foreach (var product in products)
     {
         <div>
