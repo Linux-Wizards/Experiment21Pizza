@@ -66,12 +66,17 @@
         </div>
     }
 
+    <div class="field">
+        <InputText id="notes" @bind-Value="newOrder.Notes" placeholder="Order Notes" />
+        <ValidationMessage For="@(() => newOrder.Notes)" />
+    </div>
+
     <div class="grouped-div">
         <div class="total-cost">
             Total Cost: @TotalCost.ToString("C")
         </div>
         <div class="shipping-cost">
-            (including shipping: @(ProductCost < 80M ? 15M.ToString("C") : "Free"))
+            (including shipping: @(ProductCost < 80M ? 15M.ToString("C") : "free"))
         </div>
     </div>
 
@@ -82,7 +87,7 @@
 
 @code {
     private Order newOrder = new Order();
-    private List<ProductViewModel> products;
+    private List<ProductViewModel> products = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,7 +136,7 @@
 
     private class ProductViewModel
     {
-        public Product Product { get; set; }
+        public Product Product { get; set; } = default!;
         public int Quantity { get; set; }
     }
 }

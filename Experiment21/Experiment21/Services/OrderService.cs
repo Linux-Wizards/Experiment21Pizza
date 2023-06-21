@@ -18,9 +18,11 @@ public class OrderService
         return await _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Product).ToListAsync();
     }
 
-    public async Task<Order> GetOrderByIdAsync(int id)
+    public async Task<Order?> GetOrderByIdAsync(int id)
     {
-        return await _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Product).FirstOrDefaultAsync(o => o.Id == id);
+        return await _context.Orders.Include(o => o.OrderDetails)
+            .ThenInclude(od => od.Product)
+            .FirstOrDefaultAsync(o => o.Id == id);
     }
 
     public async Task CreateOrderAsync(Order order)
