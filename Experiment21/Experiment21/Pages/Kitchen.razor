@@ -8,6 +8,12 @@
         font-size: 0.6em;
         padding: 5px 10px;
     }
+
+    .order-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
 </style>
 
 <h1>Kitchen Orders</h1>
@@ -17,12 +23,23 @@
 {
     foreach (var order in orders.Where(o => o.Status == OrderStatus.Received))
     {
-        <p>
-            Order ID: @order.Id <br />
-            Customer name: @order.CustomerName <br />
-            Status: @order.Status <br />
+        <div class="order-card">
+            <p>
+                Order ID: @order.Id <br />
+                Customer name: @order.CustomerName <br />
+                Status: @FormatStatus(order.Status) <br />
+                <button @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                @if (productListShown[order.Id])
+                {
+                    foreach (var orderDetail in order.OrderDetails)
+                    {
+                    <p>@orderDetail.Product.Name: @orderDetail.Quantity</p>
+                    }
+                }
+
             <button @onclick="() => PrepareOrder(order)">Start Preparing</button>
-        </p>
+            </p>
+        </div>
     }
 }
 
@@ -31,12 +48,23 @@
 {
     foreach (var order in orders.Where(o => o.Status == OrderStatus.BeingPrepared))
     {
-        <p>
-            Order ID: @order.Id <br />
-            Customer name: @order.CustomerName <br />
-            Status: @order.Status <br />
+        <div class="order-card">
+            <p>
+                Order ID: @order.Id <br />
+                Customer name: @order.CustomerName <br />
+                Status: @FormatStatus(order.Status) <br />
+                <button @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                @if (productListShown[order.Id])
+                {
+                    foreach (var orderDetail in order.OrderDetails)
+                    {
+                    <p>@orderDetail.Product.Name: @orderDetail.Quantity</p>
+                    }
+                }
+
             <button @onclick="() => CompleteOrder(order)">Ready for Pickup</button>
-        </p>
+            </p>
+        </div>
     }
 }
 
@@ -45,16 +73,27 @@
 {
     foreach (var order in orders.Where(o => o.Status == OrderStatus.ReadyForPickup))
     {
-        <p>
-            Order ID: @order.Id <br />
-            Customer name: @order.CustomerName <br />
-            Status: @order.Status <br />
-        </p>
+        <div class="order-card">
+            <p>
+                Order ID: @order.Id <br />
+                Customer name: @order.CustomerName <br />
+                Status: @FormatStatus(order.Status) <br />
+                <button @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                @if (productListShown[order.Id])
+                {
+                    foreach (var orderDetail in order.OrderDetails)
+                    {
+                    <p>@orderDetail.Product.Name: @orderDetail.Quantity</p>
+                    }
+                }
+            </p>
+        </div>
     }
 }
 
 @code {
     private List<Order> orders = new();
+    private Dictionary<int, bool> productListShown = new();
 
     private bool showReceivedOrders = true;
     private bool showBeingPreparedOrders = true;
@@ -72,6 +111,18 @@
     private async Task GetOrders()
     {
         orders = await OrderService.GetOrdersAsync();
+        foreach (var order in orders)
+        {
+            if (!productListShown.ContainsKey(order.Id))
+            {
+                productListShown.Add(order.Id, false);
+            }
+        }
+    }
+
+    private void ToggleProductList(int orderId)
+    {
+        productListShown[orderId] = !productListShown[orderId];
     }
 
     private async Task PrepareOrder(Order order)
@@ -86,5 +137,20 @@
         order.Status = OrderStatus.ReadyForPickup;
         await OrderService.UpdateOrderAsync(order);
         await GetOrders();
+    }
+
+    private string FormatStatus(OrderStatus status)
+    {
+        switch (status)
+        {
+            case OrderStatus.Received:
+                return "Received";
+            case OrderStatus.BeingPrepared:
+                return "Being prepared";
+            case OrderStatus.ReadyForPickup:
+                return "Ready for pickup";
+            default:
+                return "Unknown status";
+        }
     }
 }
