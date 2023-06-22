@@ -43,6 +43,8 @@
                 Order ID: @order.Id <br />
                 Customer name: @order.CustomerName <br />
                 Status: @FormatStatus(order.Status) <br />
+                Address: @order.Address <br />
+                Phone number: @order.PhoneNumber <br />
                 Notes: @(String.IsNullOrWhiteSpace(@order.Notes) ? "no notes" : @order.Notes)<br />
                 <div class="card-actions">
                     <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
@@ -72,6 +74,8 @@
                 Order ID: @order.Id <br />
                 Customer name: @order.CustomerName <br />
                 Status: @FormatStatus(order.Status) <br />
+                Address: @order.Address <br />
+                Phone number: @order.PhoneNumber <br />
                 Notes: @(String.IsNullOrWhiteSpace(@order.Notes) ? "no notes" : @order.Notes)<br />
                 <div class="card-actions">
                     <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
