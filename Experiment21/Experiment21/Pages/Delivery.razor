@@ -1,0 +1,152 @@
+﻿@page "/delivery"
+@inject OrderService OrderService
+@using Experiment21.Models;
+@using Experiment21.Services;
+
+<style>
+    .toggle-button {
+        font-size: 0.6em;
+        padding: 5px 10px;
+    }
+
+    .order-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .button-spacing {
+        margin-right: 10px;
+    }
+
+    .card-actions {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .product-list {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+    }
+</style>
+
+<h1>Deliver orders</h1>
+
+<h2>Waiting for pickup <button class="toggle-button" @onclick="() => showWaitingForPickupOrders = !showWaitingForPickupOrders">@showWaitingForPickupButtonText</button></h2>
+@if (showWaitingForPickupOrders)
+{
+    foreach (var order in orders.Where(o => o.Status == OrderStatus.ReadyForPickup))
+    {
+        <div class="order-card">
+            <p>
+                Order ID: @order.Id <br />
+                Customer name: @order.CustomerName <br />
+                Status: @FormatStatus(order.Status) <br />
+                Notes: @(String.IsNullOrWhiteSpace(@order.Notes) ? "no notes" : @order.Notes)<br />
+                <div class="card-actions">
+                    <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                    <button @onclick="() => PickUpOrder(order)">Pick up order</button>
+                </div>
+                @if (productListShown[order.Id])
+                {
+                    <div class="product-list">
+                        @foreach (var orderDetail in order.OrderDetails)
+                        {
+                            <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
+                        }
+                    </div>
+                }
+            </p>
+        </div>
+    }
+}
+
+<h2>In delivery <button class="toggle-button" @onclick="() => showInDeliveryOrders = !showInDeliveryOrders">@showInDeliveryButtonText</button></h2>
+@if (showInDeliveryOrders)
+{
+    foreach (var order in orders.Where(o => o.Status == OrderStatus.InDelivery))
+    {
+        <div class="order-card">
+            <p>
+                Order ID: @order.Id <br />
+                Customer name: @order.CustomerName <br />
+                Status: @FormatStatus(order.Status) <br />
+                Notes: @(String.IsNullOrWhiteSpace(@order.Notes) ? "no notes" : @order.Notes)<br />
+                <div class="card-actions">
+                    <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                    <button @onclick="() => DeliverOrder(order)">Deliver order</button>
+                </div>
+                @if (productListShown[order.Id])
+                {
+                    <div class="product-list">
+                        @foreach (var orderDetail in order.OrderDetails)
+                        {
+                            <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
+                        }
+                    </div>
+                }
+            </p>
+        </div>
+    }
+}
+
+@code {
+    private List<Order> orders = new();
+    private Dictionary<int, bool> productListShown = new();
+
+    private bool showWaitingForPickupOrders = true;
+    private bool showInDeliveryOrders = true;
+
+    private string showWaitingForPickupButtonText => showWaitingForPickupOrders ? "Hide" : "Show";
+    private string showInDeliveryButtonText => showInDeliveryOrders ? "Hide" : "Show";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetOrders();
+    }
+
+    private async Task GetOrders()
+    {
+        orders = await OrderService.GetOrdersAsync();
+        foreach (var order in orders)
+        {
+            if (!productListShown.ContainsKey(order.Id))
+            {
+                productListShown.Add(order.Id, false);
+            }
+        }
+    }
+
+    private void ToggleProductList(int orderId)
+    {
+        productListShown[orderId] = !productListShown[orderId];
+    }
+
+    private async Task PickUpOrder(Order order)
+    {
+        order.Status = OrderStatus.InDelivery;
+        await OrderService.UpdateOrderAsync(order);
+        await GetOrders();
+    }
+
+    private async Task DeliverOrder(Order order)
+    {
+        order.Status = OrderStatus.Delivered;
+        await OrderService.UpdateOrderAsync(order);
+        await GetOrders();
+    }
+
+    private string FormatStatus(OrderStatus status)
+    {
+        switch (status)
+        {
+            case OrderStatus.ReadyForPickup:
+                return "Ready for pickup";
+            case OrderStatus.InDelivery:
+                return "In delivery";
+            default:
+                return "Unknown status";
+        }
+    }
+}
