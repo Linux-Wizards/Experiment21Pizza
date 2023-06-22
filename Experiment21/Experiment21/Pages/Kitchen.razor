@@ -18,9 +18,20 @@
     .button-spacing {
         margin-right: 10px;
     }
+
+    .card-actions {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .product-list {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+    }
 </style>
 
-<h1>Kitchen Orders</h1>
+<h1>Prepare orders</h1>
 
 <h2>Received <button class="toggle-button" @onclick="() => showReceivedOrders = !showReceivedOrders">@showReceivedButtonText</button></h2>
 @if (showReceivedOrders)
@@ -32,16 +43,20 @@
                 Order ID: @order.Id <br />
                 Customer name: @order.CustomerName <br />
                 Status: @FormatStatus(order.Status) <br />
-                <button class="button-spacing"  @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                Notes: @(String.IsNullOrWhiteSpace(@order.Notes) ? "no notes" : @order.Notes)<br />
+                <div class="card-actions">
+                    <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                    <button @onclick="() => PrepareOrder(order)">Start Preparing</button>
+                </div>
                 @if (productListShown[order.Id])
                 {
-                    foreach (var orderDetail in order.OrderDetails)
-                    {
-                    <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
-                    }
+                    <div class="product-list">
+                        @foreach (var orderDetail in order.OrderDetails)
+                        {
+                            <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
+                        }
+                    </div>
                 }
-
-            <button @onclick="() => PrepareOrder(order)">Start Preparing</button>
             </p>
         </div>
     }
@@ -57,16 +72,20 @@
                 Order ID: @order.Id <br />
                 Customer name: @order.CustomerName <br />
                 Status: @FormatStatus(order.Status) <br />
-                <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                Notes: @(String.IsNullOrWhiteSpace(@order.Notes) ? "no notes" : @order.Notes)<br />
+                <div class="card-actions">
+                    <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                    <button @onclick="() => CompleteOrder(order)">Ready for pickup</button>
+                </div>
                 @if (productListShown[order.Id])
                 {
-                    foreach (var orderDetail in order.OrderDetails)
-                    {
-                    <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
-                    }
+                    <div class="product-list">
+                        @foreach (var orderDetail in order.OrderDetails)
+                        {
+                            <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
+                        }
+                    </div>
                 }
-
-            <button @onclick="() => CompleteOrder(order)">Ready for Pickup</button>
             </p>
         </div>
     }
@@ -82,13 +101,19 @@
                 Order ID: @order.Id <br />
                 Customer name: @order.CustomerName <br />
                 Status: @FormatStatus(order.Status) <br />
-                <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                Notes: @(String.IsNullOrWhiteSpace(@order.Notes) ? "no notes" : @order.Notes)<br />
+                <div class="card-actions">
+                    <button class="button-spacing" @onclick="() => ToggleProductList(order.Id)">@(productListShown[order.Id] ? "Hide Products" : "Show Products")</button>
+                    <button @onclick="() => PickedUp(order)">Picked up</button>
+                </div>
                 @if (productListShown[order.Id])
                 {
-                    foreach (var orderDetail in order.OrderDetails)
-                    {
-                    <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
-                    }
+                    <div class="product-list">
+                        @foreach (var orderDetail in order.OrderDetails)
+                        {
+                            <p>@orderDetail.Quantity x @orderDetail.Product.Name</p>
+                        }
+                    </div>
                 }
             </p>
         </div>
@@ -139,6 +164,13 @@
     private async Task CompleteOrder(Order order)
     {
         order.Status = OrderStatus.ReadyForPickup;
+        await OrderService.UpdateOrderAsync(order);
+        await GetOrders();
+    }
+
+    private async Task PickedUp(Order order)
+    {
+        order.Status = OrderStatus.InDelivery;
         await OrderService.UpdateOrderAsync(order);
         await GetOrders();
     }
