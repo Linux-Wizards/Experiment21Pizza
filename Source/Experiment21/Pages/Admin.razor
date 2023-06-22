@@ -2,6 +2,7 @@
 @attribute [Authorize(Roles = "Administrator")]
 @inject UserManager<IdentityUser> UserManager
 @inject RoleManager<IdentityRole> RoleManager
+@inject IJSRuntime JSRuntime
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 
@@ -13,7 +14,7 @@
         border-radius: 10px;
     }
 
-        .user-container h3 {
+        .user-container h4 {
             margin-bottom: 5px;
         }
 
@@ -35,6 +36,7 @@ else
         <div class="user-container">
             <h4>User: @user.UserName</h4>
             <button @onclick="() => ToggleUserRolesVisibility(user)">Show Roles</button>
+            <button @onclick="() => ConfirmAndRemoveUser(user)">Remove User</button>
             @if (showRoles[user.Id])
             {
                 foreach (var role in allRoles)
@@ -86,5 +88,22 @@ else
 
         // Update roles for the user
         userRoles[user.Id] = (await UserManager.GetRolesAsync(user)).ToList();
+    }
+
+    async Task ConfirmAndRemoveUser(IdentityUser user)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete user {user.UserName}?");
+        if (confirmed)
+        {
+            var result = await UserManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                users.Remove(user);
+            }
+            else
+            {
+                Console.WriteLine("Error occurred while deleting user.");
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/delivery"
+@attribute [Authorize(Roles = "Administrator, DeliverOrders")]
 @inject OrderService OrderService
 @using Experiment21.Models;
 @using Experiment21.Services;
