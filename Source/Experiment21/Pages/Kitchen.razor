@@ -38,7 +38,7 @@
 <h2>Received <button class="toggle-button" @onclick="() => showReceivedOrders = !showReceivedOrders">@showReceivedButtonText</button></h2>
 @if (showReceivedOrders)
 {
-    foreach (var order in orders.Where(o => o.Status == OrderStatus.Received))
+    foreach (var order in ordersReceived)
     {
         <div class="order-card">
             <p @key="order">
@@ -67,7 +67,7 @@
 <h2>Being Prepared <button class="toggle-button" @onclick="() => showBeingPreparedOrders = !showBeingPreparedOrders">@showBeingPreparedButtonText</button></h2>
 @if (showBeingPreparedOrders)
 {
-    foreach (var order in orders.Where(o => o.Status == OrderStatus.BeingPrepared))
+    foreach (var order in ordersInPreparation)
     {
         <div class="order-card">
             <p @key="order">
@@ -96,7 +96,7 @@
 <h2>Ready For Pickup <button class="toggle-button" @onclick="() => showReadyForPickupOrders = !showReadyForPickupOrders">@showReadyForPickupButtonText</button></h2>
 @if (showReadyForPickupOrders)
 {
-    foreach (var order in orders.Where(o => o.Status == OrderStatus.ReadyForPickup))
+    foreach (var order in ordersToPickUp)
     {
         <div class="order-card">
             <p @key="order">
@@ -123,9 +123,11 @@
 }
 
 @code {
-    private List<Order> orders = new();
-    private Dictionary<int, bool> productListShown = new();
+    private IEnumerable<Order> ordersReceived = default!;
+    private IEnumerable<Order> ordersInPreparation = default!;
+    private IEnumerable<Order> ordersToPickUp = default!;
 
+    private Dictionary<int, bool> productListShown = new();
     private bool showReceivedOrders = true;
     private bool showBeingPreparedOrders = true;
     private bool showReadyForPickupOrders = true;
@@ -161,8 +163,13 @@
 
     private async Task GetOrders()
     {
-        orders = await OrderService.GetOrdersAsync();
-        foreach (var order in orders)
+        var orders = await OrderService.GetOrdersAsync();
+
+        ordersReceived = orders.Where(o => o.Status == OrderStatus.Received);
+        ordersInPreparation = orders.Where(o => o.Status == OrderStatus.BeingPrepared);
+        ordersToPickUp = orders.Where(o => o.Status == OrderStatus.ReadyForPickup);
+
+        foreach (var order in ordersReceived.Concat(ordersInPreparation).Concat(ordersToPickUp))
         {
             if (!productListShown.ContainsKey(order.Id))
             {
