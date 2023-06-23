@@ -39,7 +39,7 @@ It's related to age of one of the programmers behind the application, [DarkoGNU]
 ## How do I update the database after an application update?
 
 Open a terminal and make sure that you're in the folder that contains the source code ([Experiment21Pizza/Source
-/Experiment21](Linux-Wizards/Experiment21Pizza/tree/main/Source/Experiment21)).
+/Experiment21](/Linux-Wizards/Experiment21Pizza/tree/main/Source/Experiment21)).
 
 Run the following command:
 
@@ -54,7 +54,7 @@ The same code suggested in the question above should do the job.
 ## How do I create a migration to update the database after changing the models?
 
 Open a terminal and make sure that you're in the folder that contains the source code ([Experiment21Pizza/Source
-/Experiment21](Linux-Wizards/Experiment21Pizza/tree/main/Source/Experiment21)).
+/Experiment21](/Linux-Wizards/Experiment21Pizza/tree/main/Source/Experiment21)).
 
 Run the following command:
 
