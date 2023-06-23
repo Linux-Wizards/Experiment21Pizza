@@ -1,2 +1,2 @@
-# SeaBattleSharp
-Sea Battle in C#
+# PizzaBlazor
+Pizza order in C# Blazor
