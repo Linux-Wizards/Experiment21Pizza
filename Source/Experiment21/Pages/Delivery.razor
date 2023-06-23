@@ -41,7 +41,7 @@
     foreach (var order in orders.Where(o => o.Status == OrderStatus.ReadyForPickup))
     {
         <div class="order-card">
-            <p>
+            <p @key="order">
                 Order ID: @order.Id <br />
                 Customer name: @order.CustomerName <br />
                 Status: @FormatStatus(order.Status) <br />
@@ -72,7 +72,7 @@
     foreach (var order in orders.Where(o => o.Status == OrderStatus.InDelivery))
     {
         <div class="order-card">
-            <p>
+            <p @key="order">
                 Order ID: @order.Id <br />
                 Customer name: @order.CustomerName <br />
                 Status: @FormatStatus(order.Status) <br />
