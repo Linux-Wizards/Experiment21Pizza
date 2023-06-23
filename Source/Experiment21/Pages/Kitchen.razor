@@ -144,7 +144,7 @@
         refreshTimer = new Timer(RefreshData, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
     }
 
-    private async void RefreshData(object state)
+    private async void RefreshData(object? state)
     {
         await InvokeAsync(async () =>
         {
