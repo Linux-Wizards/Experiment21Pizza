@@ -21,6 +21,12 @@ There is an "Admin" page to manage users and their roles.
 
 # Potentially asked questions
 
+## How are orders refreshed?
+
+They are refreshed every 10 seconds (using a timer).
+
+This does not work perfectly - it adds new orders to the list, but it doesn't update the status of existing orders.
+
 ## How do I restrict placing orders to users with a certain role?
 
 There is a line commented out at the beginning of "PlaceOrder.razor":
