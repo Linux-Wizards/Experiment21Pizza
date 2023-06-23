@@ -3,6 +3,7 @@
 @inject OrderService OrderService
 @using Experiment21.Models;
 @using Experiment21.Services;
+@implements IDisposable
 
 <style>
     .toggle-button {
@@ -133,9 +134,29 @@
     private string showBeingPreparedButtonText => showBeingPreparedOrders ? "Hide" : "Show";
     private string showReadyForPickupButtonText => showReadyForPickupOrders ? "Hide" : "Show";
 
+    private Timer refreshTimer = default!;
+
     protected override async Task OnInitializedAsync()
     {
         await GetOrders();
+
+        // Create a timer with a 10 second interval
+        refreshTimer = new Timer(RefreshData, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
+    }
+
+    private async void RefreshData(object state)
+    {
+        await InvokeAsync(async () =>
+        {
+            await GetOrders();
+            StateHasChanged();  // Tell Blazor to re-render the component
+        });
+    }
+
+    public void Dispose()
+    {
+        // Dispose the timer when the component is disposed
+        refreshTimer?.Dispose();
     }
 
     private async Task GetOrders()
@@ -146,6 +167,7 @@
             if (!productListShown.ContainsKey(order.Id))
             {
                 productListShown.Add(order.Id, false);
+                // } else if (productListShown[order.Id].)
             }
         }
     }
