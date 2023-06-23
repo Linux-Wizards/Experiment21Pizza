@@ -38,7 +38,7 @@
 <h2>Waiting for pickup <button class="toggle-button" @onclick="() => showWaitingForPickupOrders = !showWaitingForPickupOrders">@showWaitingForPickupButtonText</button></h2>
 @if (showWaitingForPickupOrders)
 {
-    foreach (var order in orders.Where(o => o.Status == OrderStatus.ReadyForPickup))
+    foreach (var order in ordersToPickUp)
     {
         <div class="order-card">
             <p @key="order">
@@ -69,7 +69,7 @@
 <h2>In delivery <button class="toggle-button" @onclick="() => showInDeliveryOrders = !showInDeliveryOrders">@showInDeliveryButtonText</button></h2>
 @if (showInDeliveryOrders)
 {
-    foreach (var order in orders.Where(o => o.Status == OrderStatus.InDelivery))
+    foreach (var order in ordersInDelivery)
     {
         <div class="order-card">
             <p @key="order">
@@ -98,9 +98,10 @@
 }
 
 @code {
-    private List<Order> orders = new();
-    private Dictionary<int, bool> productListShown = new();
+    private IEnumerable<Order> ordersToPickUp = default!;
+    private IEnumerable<Order> ordersInDelivery = default!;
 
+    private Dictionary<int, bool> productListShown = new();
     private bool showWaitingForPickupOrders = true;
     private bool showInDeliveryOrders = true;
 
@@ -134,8 +135,12 @@
 
     private async Task GetOrders()
     {
-        orders = await OrderService.GetOrdersAsync();
-        foreach (var order in orders)
+        var orders = await OrderService.GetOrdersAsync();
+
+        ordersToPickUp = orders.Where(o => o.Status == OrderStatus.ReadyForPickup);
+        ordersInDelivery = orders.Where(o => o.Status == OrderStatus.InDelivery);
+
+        foreach (var order in ordersToPickUp.Concat(ordersInDelivery))
         {
             if (!productListShown.ContainsKey(order.Id))
             {

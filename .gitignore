@@ -367,3 +367,4 @@ MigrationBackup/
 ## Custom configuration
 *.db-shm
 *.db-wal
+*.db
