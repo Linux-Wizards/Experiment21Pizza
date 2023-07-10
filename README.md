@@ -21,8 +21,8 @@ There is an "Admin" page to manage users and their roles.
 
 # Administration
 
-Default admin credentials:
-Login: admin@experiment21.com
+Default admin credentials:\
+Login: admin@experiment21.com\
 Password: SuperStrongAdminPassword
 
 # Potentially asked questions
